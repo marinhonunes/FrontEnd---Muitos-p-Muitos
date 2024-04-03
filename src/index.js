@@ -12,4 +12,3 @@ root.render(
 );
 
 
-//1:06:39 https://drive.google.com/file/d/1Wc0XY2L8fkqJeyejpMaYnWpCiE-O8jwH/view

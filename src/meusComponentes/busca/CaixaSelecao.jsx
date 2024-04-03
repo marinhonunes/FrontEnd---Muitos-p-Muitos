@@ -48,7 +48,7 @@ export default function CaixaSelecao({ enderecoFonteDados,
                       }
                     ]);
         }
-    }, []);  //willMount
+    }, []);  
 
     return (
         <Container border>
