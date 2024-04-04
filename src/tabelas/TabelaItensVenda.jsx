@@ -1,7 +1,17 @@
-import { Button, Container, Table } from "react-bootstrap";
+import { useEffect, useState } from "react";
+import { Container, Table, Button } from "react-bootstrap";
 
 export default function TabelaItensVenda(props) {
-    var totalVendas = 0;
+    const [totalOrdem, setTotalOrdem] = useState(0);
+
+    useEffect(() => {
+        let total = 0;
+        props.listaItens.forEach(item => {
+            total += parseFloat(item.preco);
+        });
+        setTotalOrdem(total);
+        props.atualizarTotalOrdem(total);
+    }, [props.listaItens]);
 
     const removerItem = (item) => {
         const novaLista = props.listaItens.filter((i) => i.codigo !== item.codigo);
@@ -24,7 +34,6 @@ export default function TabelaItensVenda(props) {
                 </thead>
                 <tbody>
                     {props.listaItens?.map((item, indice) => {
-                        totalVendas += parseFloat(item.preco);
                         return (
                             <tr key={indice}>
                                 <td>{item.codigo}</td>
@@ -43,7 +52,7 @@ export default function TabelaItensVenda(props) {
                     })}
                 </tbody>
             </Table>
-            <p>Total da Ordem: {totalVendas}</p>
+            <p>Total da Ordem: {totalOrdem}</p>
         </Container>
     );
 }

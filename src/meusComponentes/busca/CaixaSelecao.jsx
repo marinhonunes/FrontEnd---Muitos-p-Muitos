@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { useEffect, useState } from "react";
 import { Container, Col, Form, Row, Spinner } from "react-bootstrap";
 
@@ -48,6 +49,7 @@ export default function CaixaSelecao({ enderecoFonteDados,
                       }
                     ]);
         }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);  
 
     return (

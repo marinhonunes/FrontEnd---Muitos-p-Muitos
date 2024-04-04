@@ -9,10 +9,6 @@ export default function FormCadVenda(props) {
   const [listaClientes, setListaClientes] = useState([]);
   const [clienteSelecionado, setClienteSelecionado] = useState({});
   const [FuncionarioSelecionado, setFuncionarioSelecionado] = useState({});
-  // const [qtdItem, setQtdItem] = useState(0);
-  // const [subTotalCalculado, setSubTotalCalculado] = useState(0.00);
-
-  //O estado venda possui correlação com a venda gerenciada no backend
   const [ordem, setOrdem] = useState({
     id: 0,
     dataOrdem: "",
@@ -49,8 +45,39 @@ export default function FormCadVenda(props) {
   }
 
   function gravarVenda() {
-    //gravar no backend
-  }
+    // Construir o objeto ordem conforme o formato esperado pelo backend
+    const itensOrdemDeServico = ordem.itens.map(item => ({
+        funcionario: { codigo: item.codigo },
+        descricaoOs: item.descricao,
+        precoUnitario: parseFloat(item.preco)
+    }));
+
+    const dataOrdemFormatada = new Date(ordem.dataOrdem).toLocaleDateString('en-GB'); // Formatando a data para 'DD/MM/YYYY'
+
+    const ordemDeServico = {
+        cliente: clienteSelecionado ? { codigo: clienteSelecionado.codigo } : null,
+        dataOrdem: dataOrdemFormatada,
+        total: parseFloat(ordem.total),
+        itensOrdemDeServico: itensOrdemDeServico
+    };
+
+    // Enviar o objeto ordem para o backend
+    fetch('http://localhost:3001/ordem', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(ordemDeServico)
+    })
+    .then(resposta => resposta.json())
+    .then((dados)=>{
+        if(dados.status){
+            setOrdem({...ordem, id: dados.codigo})
+        }
+        alert(dados.mensagem);
+    })
+    .catch(erro => alert(erro.message))
+}
 
   const manipulaSubmissao = (event) => {
     const form = event.currentTarget;
@@ -62,6 +89,13 @@ export default function FormCadVenda(props) {
     }
     event.preventDefault();
     event.stopPropagation();
+  };
+
+  const atualizarTotalOrdem = (total) => {
+    setOrdem((prevOrdem) => ({
+      ...prevOrdem,
+      total: total,
+    }));
   };
 
   return (
@@ -140,6 +174,7 @@ export default function FormCadVenda(props) {
                 campoChave={"codigo"}
                 campoExibicao={"nome"}
                 funcaoSelecao={setFuncionarioSelecionado}
+                atualizarTotalOrdem={atualizarTotalOrdem}
               />
             </Col>
           </Row>
@@ -218,6 +253,7 @@ export default function FormCadVenda(props) {
               listaItens={ordem.itens}
               setOrdem={setOrdem}
               dadosOrdem={ordem}
+              atualizarTotalOrdem={atualizarTotalOrdem}
             />
           </Row>
         </Container>
